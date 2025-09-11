@@ -1,0 +1,16 @@
+# Archivos de Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Binarios y build
+bin/
+obj/
+
+# Archivos de configuración local
+*.cache
+*.log
+*.ldb
+*.pdb
