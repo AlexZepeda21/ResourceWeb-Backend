@@ -1,16 +1,48 @@
-# Archivos de Visual Studio
-.vs/
+# Visual Studio y archivos de solución
+*.vspscc
+*.vssscc
 *.suo
 *.user
-*.userosscache
-*.sln.docstates
-
-# Binarios y build
-bin/
-obj/
-
-# Archivos de configuración local
-*.cache
 *.log
-*.ldb
-*.pdb
+*.docstates
+
+# Caché y archivos temporales de Visual Studio
+.vs/
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+
+# Paquetes y dependencias de NuGet
+[Pp]ackages/
+*.nupkg
+
+# Resharper
+_ReSharper.*/
+*.[Rr]e[Ss]harper
+*.ReSharper.user
+*.ReSharper.DotSettings
+*.ReSharper.SolutionSettings
+
+# Rider
+.idea/
+
+# Vscode
+.vscode/
+
+# Archivos de base de datos
+*.mdf
+*.ldf
+*.sqlite
+*.db
+
+# Archivos de usuario
+*.user
+*.local/
+*.bak
+
+# Logs y archivos de configuración sensibles
+*.log
+appsettings.Development.json
+appsettings.Production.json
+appsettings.*.json
