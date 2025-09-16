@@ -15,11 +15,10 @@ namespace ResourceWeb.Services.Register.Domain.Entities
         public string PasswordHash { get; protected set; }
         public DateTime? Birthdate { get; protected set; }
         public bool IsActive { get; protected set; } = true;
-        public int RoleId { get; protected set; }
-
+        public Guid RoleId { get; protected set; }
         public RoleEntity Role { get; protected set; }
 
-        public UserEntity(string userName, string email, int roleId)
+        public UserEntity(string userName, string email, Guid roleId)
         {
             UserName = userName ?? throw new ArgumentNullException(nameof(userName));
             Email = email ?? throw new ArgumentNullException(nameof(email));

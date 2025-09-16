@@ -31,7 +31,7 @@ namespace ResourceWeb.Services.Register.Data.Configurations
                 .HasDefaultValue(true);
 
             builder.Property(r => r.CreatedAt)
-                .HasDefaultValueSql("GETUTCDATE");
+                .HasDefaultValueSql("GETUTCDATE()");
         }
     }
    
