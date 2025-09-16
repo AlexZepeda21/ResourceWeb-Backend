@@ -18,11 +18,15 @@ namespace ResourceWeb.Services.Register.Domain.Entities
         public Guid RoleId { get; protected set; }
         public RoleEntity Role { get; protected set; }
 
-        public UserEntity(string userName, string email, Guid roleId)
+        protected UserEntity() { }
+        public UserEntity(string userName, string email, string passwordHash, Guid roleId)
         {
-            UserName = userName ?? throw new ArgumentNullException(nameof(userName));
-            Email = email ?? throw new ArgumentNullException(nameof(email));
+            UserName = userName;
+            Email = email;
+            PasswordHash = passwordHash;
             RoleId = roleId;
+            IsActive = true;
+            CreatedAt = DateTime.UtcNow;
         }
     }
 }

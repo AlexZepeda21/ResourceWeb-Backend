@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ResourceWeb.Services.Register.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial_UserRole : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
