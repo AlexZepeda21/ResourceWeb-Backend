@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using ResourceWeb.Services.Register.Application.Behaviors;
 using ResourceWeb.Services.Register.Application.Services;
 using ResourceWeb.Services.Register.Domain.Interfaces.ResourceWeb.Services.Register.Domain.Interfaces;
 using System.Reflection;
@@ -12,12 +13,14 @@ namespace ResourceWeb.Services.Register.Application.Dependencies
     {
         public static IServiceCollection AddApplicationDependencies(this IServiceCollection services)
         {
-            // Registra el password hasher
             services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
 
-            services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             return services;
         }

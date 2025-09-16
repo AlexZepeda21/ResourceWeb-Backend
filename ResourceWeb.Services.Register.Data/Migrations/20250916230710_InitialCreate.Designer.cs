@@ -12,8 +12,8 @@ using ResourceWeb.Services.Register.Data.Context;
 namespace ResourceWeb.Services.Register.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250916060445_Initial_UserRole")]
-    partial class Initial_UserRole
+    [Migration("20250916230710_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

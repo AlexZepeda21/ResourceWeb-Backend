@@ -19,14 +19,14 @@ namespace ResourceWeb.Services.Register.Data.Repositories
         public async Task<UserEntity> GetByIdAsync(Guid id)
         {
             return await _context.Users
-                .Include(u => u.Role) // Si quieres incluir el rol
+                .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<UserEntity> GetByEmailAsync(string email)
         {
             return await _context.Users
-                .Include(u => u.Role) // Si quieres incluir el rol
+                .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
@@ -34,6 +34,12 @@ namespace ResourceWeb.Services.Register.Data.Repositories
         {
             return await _context.Users
                 .AnyAsync(u => u.Email == email);
+        }
+
+        public async Task<bool> UsernameExistsAsync(string username)
+        {
+            return await _context.Users
+                .AnyAsync(u => u.UserName == username);
         }
 
         public async Task AddAsync(UserEntity user)
