@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ResourceWeb.Services.Register.Application.Dependencies;
 using ResourceWeb.Services.Register.Data.Context;
 using ResourceWeb.Services.Register.Data.Dependencies;
 using ResourceWeb.Services.Register.Data.Seeders;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,26 @@ builder.Services.AddMediatR(cfg =>
 
 builder.Services.AddDataDependencies();
 builder.Services.AddApplicationDependencies();
+
+// Configuración JWT
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "ResourceWebAPI",
+            ValidAudience = builder.Configuration["Jwt:Audience"] ?? "ResourceWebClient",
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"] ?? "MiClaveSecretaSuperSeguraQueDebeSerMuyLarga123456789"))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -27,7 +50,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// ¡IMPORTANTE! El orden es crucial
+app.UseAuthentication(); // Debe ir antes de UseAuthorization
 app.UseAuthorization();
+
 app.MapControllers();
 
 // Ejecutar seeders al iniciar la aplicación
@@ -38,15 +65,10 @@ using (var scope = app.Services.CreateScope())
 
 app.Run();
 
-// Función local (sin modifier 'public')
 static async Task SeedDatabaseAsync(IServiceProvider serviceProvider)
 {
     using var scope = serviceProvider.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-    // Aplicar migraciones y crear la base de datos
     await context.Database.MigrateAsync();
-
-    // Ejecutar seeders después de crear/actualizar la BD
     await RoleSeeder.SeedAsync(context);
 }

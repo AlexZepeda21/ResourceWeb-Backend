@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using ResourceWeb.Services.Register.Application.DTOs;
+using ResourceWeb.Services.Register.Application.Services;
 using ResourceWeb.Services.Register.Domain.Interfaces;
 using ResourceWeb.Services.Register.Domain.Interfaces.ResourceWeb.Services.Register.Domain.Interfaces;
 using System.Threading;
@@ -11,13 +12,16 @@ namespace ResourceWeb.Services.Register.Application.Features.Auth.Queries.LoginU
     {
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly IJwtTokenService _jwtTokenService;
 
         public LoginUserQueryHandler(
             IUserRepository userRepository,
-            IPasswordHasher passwordHasher)
+            IPasswordHasher passwordHasher,
+            IJwtTokenService jwtTokenService)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
+            _jwtTokenService = jwtTokenService;
         }
 
         public async Task<LoginResponseDto> Handle(LoginUserQuery request, CancellationToken cancellationToken)
@@ -33,13 +37,15 @@ namespace ResourceWeb.Services.Register.Application.Features.Auth.Queries.LoginU
             if (!isPasswordValid)
                 throw new Exception("Credenciales inválidas");
 
+            var token = _jwtTokenService.GenerateToken(user);
+
             return new LoginResponseDto
             {
                 UserId = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
                 Role = user.Role?.Name ?? "User",
-                Token = "JWT_TOKEN_AQUI", 
+                Token = token, 
                 Expiration = DateTime.UtcNow.AddHours(2)
             };
         }

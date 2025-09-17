@@ -22,6 +22,8 @@ namespace ResourceWeb.Services.Register.Application.Dependencies
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
+
             return services;
         }
     }
