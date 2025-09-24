@@ -60,7 +60,7 @@ namespace ResourceWeb.Services.Register.Application.Features.Auth.Commands.Regis
                 Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
-                Role = userRole.Name
+                RoleName = userRole.Name
             };
         }
     }

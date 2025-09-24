@@ -52,5 +52,18 @@ namespace ResourceWeb.Services.Register.Data.Repositories
             _context.Users.Update(user);
             await Task.CompletedTask;
         }
+
+        public async Task<UserEntity> GetByIdWithRoleAsync(Guid id)
+        {
+            return await _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<bool> UsernameExistsExcludingUserAsync(string username, Guid excludeUserId)
+        {
+            return await _context.Users
+                .AnyAsync(u => u.UserName == username && u.Id != excludeUserId);
+        }
     }
 }

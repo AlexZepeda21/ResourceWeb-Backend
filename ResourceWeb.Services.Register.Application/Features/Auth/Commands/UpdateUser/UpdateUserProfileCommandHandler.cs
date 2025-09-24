@@ -23,32 +23,61 @@ namespace ResourceWeb.Services.Register.Application.Features.Auth.Commands.Updat
             _userRepository = userRepository;
             _appDbContext = context;
         }
+
         public async Task<UserProfileDto> Handle(UpdateUserProfileCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdAsync(request.UserId);
+            // 1. Obtener usuario con rol
+            var user = await _userRepository.GetByIdWithRoleAsync(request.UserId);
             if (user == null)
                 throw new ArgumentException("Usuario no encontrado");
 
-            if (user.UserName != request.UserName && await _userRepository.UsernameExistsAsync(request.UserName))
-                throw new ArgumentException("El nombre de usuario ya esta en uso");
+            // 2. Verificar username único (si cambió)
+            if (user.UserName != request.UserName && await _userRepository.UsernameExistsExcludingUserAsync(request.UserName, request.UserId))
+                throw new ArgumentException("El nombre de usuario ya está en uso");
 
+            // 3. Actualizar campos usando reflection (manteniendo tu approach)
             var userType = typeof(ResourceWeb.Services.Register.Domain.Entities.UserEntity);
 
-            userType.GetProperty("UserName").SetValue(user, request.UserName);
-            userType.GetProperty("Birthdate").SetValue(user, request.Birthdate);
+            // Campos básicos
+            userType.GetProperty("UserName")?.SetValue(user, request.UserName);
+            userType.GetProperty("Birthdate")?.SetValue(user, request.Birthdate);
+
+            // Nuevos campos
+            userType.GetProperty("Gender")?.SetValue(user, request.Gender);
+            userType.GetProperty("Language")?.SetValue(user, request.Language);
+            userType.GetProperty("ModeUi")?.SetValue(user, request.ModeUi);
+
+            // Actualizar timestamp
             user.SetUpdatedAt();
 
+            // 4. Guardar cambios
+            await _userRepository.UpdateAsync(user);
             await _appDbContext.SaveChangesAsync(cancellationToken);
 
+            // 5. Retornar perfil completo actualizado
             return new UserProfileDto
             {
                 Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
                 EmailConfirmed = user.EmailConfirmed,
-                Birthdate = user.Birthdate,
                 IsActive = user.IsActive,
-                Role = user.Role?.Name,
+
+                // Datos de imagen
+                ImageUrl = user.ImageUrl,
+                ImagePublicId = user.ImagePublicId,
+                ImageMime = user.ImageMime,
+
+                // Información del perfil
+                Birthdate = user.Birthdate,
+                Gender = user.Gender,
+                Language = user.Language,
+                ModeUi = user.ModeUi,
+
+                // Rol
+                RoleName = user.Role?.Name,
+
+                // Metadata
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt
             };

@@ -29,9 +29,15 @@ namespace ResourceWeb.Services.Register.Application.Features.Users.Queries.GetUs
                 UserName = user.UserName,
                 Email = user.Email,
                 EmailConfirmed = user.EmailConfirmed,
-                Birthdate = user.Birthdate,
                 IsActive = user.IsActive,
-                Role = user.Role?.Name,
+                ImageUrl = user.ImageUrl,
+                ImagePublicId = user.ImagePublicId,
+                ImageMime = user.ImageMime,
+                Birthdate = user.Birthdate,
+                Gender = user.Gender,
+                Language = user.Language,
+                ModeUi = user.ModeUi,
+                RoleName = user.Role?.Name,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt
             };

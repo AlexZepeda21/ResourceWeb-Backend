@@ -24,6 +24,8 @@ namespace ResourceWeb.Services.Register.Application.Dependencies
 
             services.AddScoped<IJwtTokenService, JwtTokenService>();
 
+            services.AddScoped<IImageUploadService, CloudinaryImageService>();
+
             return services;
         }
     }

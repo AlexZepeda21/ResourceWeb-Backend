@@ -59,5 +59,43 @@ namespace ResourceWeb.Services.Register.Api.Controllers
             var result = await _mediator.Send(command);
             return Ok(result);
         }
+        [HttpPost("profile/image")]
+        public async Task<ActionResult<ProfileImageResponseDto>> UploadProfileImage([FromBody] UploadProfileImageCommand command)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized("Token inválido");
+            }
+
+            command.UserId = userId;
+
+            var result = await _mediator.Send(command);
+
+            if (!result.Success)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpDelete("profile/image")]
+        public async Task<ActionResult> RemoveProfileImage()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized("Token inválido");
+            }
+
+            var command = new RemoveProfileImageCommand { UserId = userId };
+            var success = await _mediator.Send(command);
+
+            if (!success)
+                return BadRequest("No se pudo eliminar la imagen de perfil");
+
+            return NoContent();
+        }
     }
 }

@@ -5,6 +5,12 @@ namespace ResourceWeb.Services.Register.Application.Services
 {
     public interface IJwtTokenService
     {
-        string GenerateToken(UserEntity user);
+        TokenResult GenerateToken(UserEntity user);
+    }
+
+    public class TokenResult
+    {
+        public string Token { get; set; } = string.Empty;
+        public DateTime ExpiresAt { get; set; }
     }
 }

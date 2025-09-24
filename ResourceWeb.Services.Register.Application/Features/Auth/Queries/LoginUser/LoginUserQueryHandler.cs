@@ -3,6 +3,7 @@ using ResourceWeb.Services.Register.Application.DTOs;
 using ResourceWeb.Services.Register.Application.Services;
 using ResourceWeb.Services.Register.Domain.Interfaces;
 using ResourceWeb.Services.Register.Domain.Interfaces.ResourceWeb.Services.Register.Domain.Interfaces;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,6 +27,7 @@ namespace ResourceWeb.Services.Register.Application.Features.Auth.Queries.LoginU
 
         public async Task<LoginResponseDto> Handle(LoginUserQuery request, CancellationToken cancellationToken)
         {
+            // Buscar usuario por email
             var user = await _userRepository.GetByEmailAsync(request.Email);
             if (user == null)
                 throw new Exception("Credenciales inválidas");
@@ -33,20 +35,33 @@ namespace ResourceWeb.Services.Register.Application.Features.Auth.Queries.LoginU
             if (!user.IsActive)
                 throw new Exception("Usuario inactivo");
 
+            // Verificar contraseña
             var isPasswordValid = _passwordHasher.VerifyPassword(request.Password, user.PasswordHash);
             if (!isPasswordValid)
                 throw new Exception("Credenciales inválidas");
 
-            var token = _jwtTokenService.GenerateToken(user);
+            var tokenResult = _jwtTokenService.GenerateToken(user);
+
+            var userDto = new UserResponseDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Birthdate = user.Birthdate,
+                ImageUrl = user.ImageUrl, 
+                Gender = user.Gender,
+                Language = user.Language,
+                RoleName = user.Role?.Name ?? "User", 
+                EmailConfirmed = user.EmailConfirmed,
+                IsActive = user.IsActive,
+                CreatedAt = user.CreatedAt
+            };
 
             return new LoginResponseDto
             {
-                UserId = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                Role = user.Role?.Name ?? "User",
-                Token = token, 
-                Expiration = DateTime.UtcNow.AddHours(2)
+                Token = tokenResult.Token,
+                ExpiresAt = tokenResult.ExpiresAt,
+                User = userDto
             };
         }
     }

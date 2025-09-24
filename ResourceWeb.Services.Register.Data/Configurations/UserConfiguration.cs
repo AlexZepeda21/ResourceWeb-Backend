@@ -34,6 +34,29 @@ namespace ResourceWeb.Services.Register.Data.Configurations
             builder.Property(u => u.IsActive)
                 .HasDefaultValue(true);
 
+            builder.Property(u => u.ModeUi)
+                .HasDefaultValue(true);
+
+            builder.Property(u => u.ImageUrl)
+            .HasMaxLength(500)
+            .IsRequired(false);
+
+            builder.Property(u => u.ImagePublicId)
+                .HasMaxLength(100)
+                .IsRequired(false);
+
+            builder.Property(u => u.ImageMime)
+                .HasMaxLength(50)
+                .IsRequired(false);
+
+            builder.Property(u => u.Language)
+                .HasMaxLength(10)
+                .IsRequired(false);
+
+            builder.Property(u => u.Gender)
+            .HasMaxLength(20)
+            .IsRequired(false);
+
             builder.Property(u => u.CreatedAt)
                 .HasDefaultValueSql("GETUTCDATE()");
 

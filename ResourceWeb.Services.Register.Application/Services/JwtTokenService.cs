@@ -18,10 +18,11 @@ namespace ResourceWeb.Services.Register.Application.Services
             _configuration = configuration;
         }
 
-        public string GenerateToken(UserEntity user)
+        public TokenResult GenerateToken(UserEntity user)
         {
             var securityKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"] ?? "MiClaveSecretaSuperSeguraQueDebeSerMuyLarga123456789"));
+                Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]
+                    ?? "MiClaveSecretaSuperSeguraQueDebeSerMuyLarga123456789"));
 
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -31,18 +32,26 @@ namespace ResourceWeb.Services.Register.Application.Services
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role?.Name ?? "User"),
-                new Claim("userId", user.Id.ToString()) // Claim adicional para facilitar acceso
+                new Claim("userId", user.Id.ToString())
             };
+
+            var expiresAt = DateTime.UtcNow.AddHours(2);
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"] ?? "ResourceWebAPI",
                 audience: _configuration["Jwt:Audience"] ?? "ResourceWebClient",
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(2),
+                expires: expiresAt,
                 signingCredentials: credentials
             );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return new TokenResult
+            {
+                Token = tokenString,
+                ExpiresAt = expiresAt
+            };
         }
     }
 }

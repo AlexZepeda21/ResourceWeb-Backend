@@ -1,20 +1,16 @@
-﻿using MediatR;
-using ResourceWeb.Services.Register.Application.DTOs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ResourceWeb.Services.Register.Application.Features.Auth.Commands.UpdateUser
+namespace ResourceWeb.Services.Register.Application.DTOs
 {
-    public class UpdateUserProfileCommand : IRequest<UserProfileDto>
+    public class UpdateUserProfileDto
     {
-        public Guid UserId { get; set; }
-
         [StringLength(50, ErrorMessage = "El nombre de usuario no puede exceder 50 caracteres")]
-        public string UserName { get; set; } = string.Empty;
+        public string? UserName { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime? Birthdate { get; set; }
@@ -30,7 +26,5 @@ namespace ResourceWeb.Services.Register.Application.Features.Auth.Commands.Updat
         public string? Language { get; set; }
 
         public bool? ModeUi { get; set; }
-
     }
-   
 }
